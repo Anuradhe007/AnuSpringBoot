@@ -1,7 +1,6 @@
 package codes.anu.entities;
 
 import codes.anu.DTOs.EmployeeBasicDetailsDTO;
-import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,6 +21,9 @@ public class EmployeeBasicDetails implements Serializable{
     private Integer age;
     @Column(name = "email")
     private String email;
+    @OneToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "id")
+    private EmployeeJobDetails employeeJobDetails;
 
     public Integer getId() {
         return id;
@@ -63,9 +65,24 @@ public class EmployeeBasicDetails implements Serializable{
         this.email = email;
     }
 
+    public EmployeeJobDetails getEmployeeJobDetails() {
+        return employeeJobDetails;
+    }
+
+    public void setEmployeeJobDetails(EmployeeJobDetails employeeJobDetails) {
+        this.employeeJobDetails = employeeJobDetails;
+    }
+
     public static EmployeeBasicDetails valueOf(EmployeeBasicDetailsDTO employeeBasicDetailsDTO) {
         EmployeeBasicDetails employeeBasicDetails = new EmployeeBasicDetails();
-        BeanUtils.copyProperties(employeeBasicDetailsDTO, employeeBasicDetails);
+        EmployeeJobDetails employeeJobDetails = new EmployeeJobDetails();
+        employeeBasicDetails.setAge(employeeBasicDetailsDTO.getAge());
+        employeeBasicDetails.setEmail(employeeBasicDetailsDTO.getEmail());
+        employeeBasicDetails.setFirstName(employeeBasicDetailsDTO.getFirstName());
+        employeeBasicDetails.setLastName(employeeBasicDetailsDTO.getLastName());
+        employeeJobDetails.setIndustry(employeeBasicDetailsDTO.getEmployeeJobDetailsDTO().getIndustry());
+        employeeJobDetails.setSalary(employeeBasicDetailsDTO.getEmployeeJobDetailsDTO().getSalary());
+        employeeBasicDetails.setEmployeeJobDetails(employeeJobDetails);
         return employeeBasicDetails;
     }
 }
